@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+
+build/
+dist/
+release/
+*.spec
+
+pdf_magic_settings.json
+cometpdf_settings.json
+converted_pdfs/
+
+.vercel/
+.env
+.env.*

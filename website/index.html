@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CometPDF - Offline File to PDF Converter</title>
+  <meta name="description" content="CometPDF converts Office files, images, emails, and text files to PDF offline on Windows.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cometpdf.com/">
+  <meta property="og:title" content="CometPDF - Offline File to PDF Converter">
+  <meta property="og:description" content="Convert Office files, images, Outlook emails, and text files to PDF offline on Windows.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cometpdf.com/">
+  <meta property="og:image" content="https://cometpdf.com/assets/app-preview.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #475569;
+      --line: #cbd5e1;
+      --paper: #ffffff;
+      --bg: #f5f7fb;
+      --blue: #2563eb;
+      --green: #047857;
+      --red: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    header {
+      min-height: 92vh;
+      display: grid;
+      align-items: center;
+      padding: 40px 0 24px;
+      border-bottom: 1px solid var(--line);
+    }
+    nav {
+      position: absolute;
+      top: 22px;
+      left: 0;
+      right: 0;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 18px;
+    }
+    .brand img { width: 32px; height: 32px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
+      gap: 44px;
+      align-items: center;
+      padding-top: 38px;
+    }
+    h1 {
+      font-size: clamp(44px, 7vw, 78px);
+      line-height: 0.95;
+      margin: 0 0 20px;
+      letter-spacing: 0;
+    }
+    .lead {
+      font-size: 20px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin: 0 0 30px;
+      max-width: 620px;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: var(--paper);
+    }
+    .button.primary {
+      background: var(--blue);
+      color: white;
+      border-color: var(--blue);
+    }
+    .links { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 18px; }
+    .links a { color: var(--blue); font-weight: 700; text-decoration: none; }
+    .note { color: var(--muted); font-size: 14px; margin-top: 14px; }
+    .preview {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 24px 70px rgba(15,23,42,.18);
+      background: white;
+    }
+    section { padding: 54px 0; }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .feature {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 150px;
+    }
+    .feature h2 { font-size: 18px; margin: 0 0 10px; }
+    .feature p { color: var(--muted); line-height: 1.5; margin: 0; }
+    .supported {
+      background: var(--paper);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .chip {
+      display: inline-flex;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    footer { padding: 28px 0; color: var(--muted); font-size: 14px; }
+    @media (max-width: 860px) {
+      header { min-height: auto; padding-top: 92px; }
+      .hero { grid-template-columns: 1fr; gap: 26px; }
+      .features { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="wrap nav-inner">
+      <div class="brand"><img src="assets/cometpdf.ico" alt=""> CometPDF</div>
+      <div class="links">
+        <a href="offline-pdf-converter/">Offline converter</a>
+        <a href="word-to-pdf/">Word</a>
+        <a href="excel-to-pdf/">Excel</a>
+        <a href="msg-to-pdf/">MSG email</a>
+        <a href="#download">Download</a>
+      </div>
+    </div>
+  </nav>
+
+  <header>
+    <div class="wrap hero">
+      <div>
+        <h1>Convert files to PDF offline.</h1>
+        <p class="lead">CometPDF turns Office files, images, Outlook emails, text files, and existing PDFs into clean PDF documents on Windows. No uploads. No account. Just drag, convert, done.</p>
+        <div class="actions" id="download">
+          <a class="button primary" href="downloads/CometPDFSetup-1.0.0.exe">Download Installer</a>
+          <a class="button" href="downloads/CometPDF-1.0.0-portable.zip">Portable ZIP</a>
+          <a class="button" href="THIRD_PARTY_NOTICES.md">Third-party notices</a>
+        </div>
+        <p class="note">Installer is recommended for Desktop, Start Menu, uninstall, and optional right-click conversion. Portable ZIP runs without setup.</p>
+      </div>
+      <img class="preview" src="assets/app-preview.png" alt="CometPDF application preview">
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap features">
+      <div class="feature">
+        <h2>Private by default</h2>
+        <p>Files stay on the computer. CometPDF is built for people who do not want to upload contracts, emails, invoices, or internal documents to online converters.</p>
+      </div>
+      <div class="feature">
+        <h2>Office-quality output</h2>
+        <p>When Word, Excel, PowerPoint, Outlook, or LibreOffice are installed, CometPDF uses them for print-like PDF conversion.</p>
+      </div>
+      <div class="feature">
+        <h2>Batch-friendly</h2>
+        <p>Add many files, choose an output folder, convert them in one run, and optionally merge everything into one PDF.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="supported">
+    <div class="wrap">
+      <h2>Supported Files</h2>
+      <p class="lead">Built for everyday office work, email archiving, and quick PDF delivery.</p>
+      <div class="chips">
+        <a class="chip" href="word-to-pdf/">DOC / DOCX / RTF</a>
+        <a class="chip" href="excel-to-pdf/">XLS / XLSX / XLSM</a>
+        <a class="chip" href="powerpoint-to-pdf/">PPT / PPTX</a>
+        <a class="chip" href="msg-to-pdf/">MSG / EML</a>
+        <a class="chip" href="image-to-pdf/">JPG / PNG / WEBP / TIFF</a>
+        <span class="chip">TXT / CSV / HTML / XML / JSON</span>
+        <span class="chip">Merge PDFs</span>
+        <span class="chip">Right-click to PDF</span>
+        <span class="chip">Installer or portable</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">CometPDF 1.0.0. Free first release. Pro roadmap: OCR, compression, watch folders, PDF page tools.</div>
+  </footer>
+</body>
+</html>
