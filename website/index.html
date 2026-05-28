@@ -97,6 +97,11 @@
       color: white;
       border-color: var(--blue);
     }
+    .button.store {
+      background: #0f172a;
+      color: white;
+      border-color: #0f172a;
+    }
     .links { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 18px; }
     .links a { color: var(--blue); font-weight: 700; text-decoration: none; }
     .note { color: var(--muted); font-size: 14px; margin-top: 14px; }
@@ -167,11 +172,12 @@
         <h1>Convert files to PDF offline.</h1>
         <p class="lead">CometPDF turns Office files, images, Outlook emails, text files, and existing PDFs into clean PDF documents on Windows. No uploads. No account. Just drag, convert, done.</p>
         <div class="actions" id="download">
+          <a class="button store" href="#store">Microsoft Store coming soon</a>
           <a class="button primary" href="downloads/CometPDFSetup-1.0.0.exe">Download Installer</a>
           <a class="button" href="downloads/CometPDF-1.0.0-portable.zip">Portable ZIP</a>
           <a class="button" href="THIRD_PARTY_NOTICES.md">Third-party notices</a>
         </div>
-        <p class="note">Installer is recommended for Desktop, Start Menu, uninstall, and optional right-click conversion. Portable ZIP runs without setup.</p>
+        <p class="note">Microsoft Store distribution is being prepared. Installer is recommended for Desktop, Start Menu, uninstall, and optional right-click conversion. Portable ZIP runs without setup.</p>
       </div>
       <img class="preview" src="assets/app-preview.png" alt="CometPDF application preview">
     </div>
@@ -212,8 +218,25 @@
     </div>
   </section>
 
+  <section id="store">
+    <div class="wrap features">
+      <div class="feature">
+        <h2>Microsoft Store</h2>
+        <p>CometPDF is being prepared for Microsoft Store submission. When it is approved, this page will link to the Store as the recommended install path.</p>
+      </div>
+      <div class="feature">
+        <h2>Manual installer</h2>
+        <p>The direct Windows installer remains available for users who prefer a classic setup file or need right-click conversion integration.</p>
+      </div>
+      <div class="feature">
+        <h2>Portable ZIP</h2>
+        <p>The portable version can run without installation and is useful for quick testing or locked-down workstations.</p>
+      </div>
+    </div>
+  </section>
+
   <footer>
-    <div class="wrap">CometPDF 1.0.0. Free first release. Pro roadmap: OCR, compression, watch folders, PDF page tools.</div>
+    <div class="wrap">CometPDF 1.0.0. Free first release. <a href="privacy/">Privacy Policy</a>. Pro roadmap: OCR, compression, watch folders, PDF page tools.</div>
   </footer>
 </body>
 </html>
