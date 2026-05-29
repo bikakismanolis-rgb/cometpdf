@@ -105,6 +105,26 @@
     .links { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 18px; }
     .links a { color: var(--blue); font-weight: 700; text-decoration: none; }
     .note { color: var(--muted); font-size: 14px; margin-top: 14px; }
+    .trust {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      background: #f0fdf4;
+      color: #166534;
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 620px;
+    }
+    .trust a { color: #166534; font-weight: 800; }
+    .hash {
+      display: block;
+      margin-top: 6px;
+      color: #334155;
+      word-break: break-all;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+    }
     .preview {
       width: 100%;
       border: 1px solid var(--line);
@@ -178,6 +198,11 @@
           <a class="button" href="THIRD_PARTY_NOTICES.md">Third-party notices</a>
         </div>
         <p class="note">Microsoft Store distribution is being prepared. Installer is recommended for Desktop, Start Menu, uninstall, and optional right-click conversion. Portable ZIP runs without setup.</p>
+        <p class="trust">
+          Installer scan: <a href="https://www.virustotal.com/gui/file/4e8b4d5d03145b51ee1579855bdccbd71a19a206dd52338a645edfd0dd909e67/detection">VirusTotal 0/70 detections</a>.
+          First release is unsigned, so Windows or Chrome may show an unknown publisher warning.
+          <span class="hash">SHA256: 4E8B4D5D03145B51EE1579855BDCCBD71A19A206DD52338A645EDFD0DD909E67</span>
+        </p>
       </div>
       <img class="preview" src="assets/app-preview.png" alt="CometPDF application preview">
     </div>
