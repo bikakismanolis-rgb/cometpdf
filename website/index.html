@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CometPDF - Offline File to PDF Converter</title>
-  <meta name="description" content="CometPDF converts Office files, images, emails, and text files to PDF offline on Windows, and exports PDFs to images, text, Word, and PowerPoint.">
+  <title>CometPDF - Offline PDF Converter for Windows</title>
+  <meta name="description" content="Convert files to PDF and export PDFs to Word, PowerPoint, images, and text offline on Windows. No uploads.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://cometpdf.com/">
-  <meta property="og:title" content="CometPDF - Offline File to PDF Converter">
-  <meta property="og:description" content="Convert files to PDF offline on Windows, and export PDFs to images, text, Word, and PowerPoint.">
+  <meta property="og:title" content="CometPDF - Offline PDF Converter for Windows">
+  <meta property="og:description" content="Convert files to PDF and export PDFs to images, text, Word, and PowerPoint offline on Windows.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://cometpdf.com/">
   <meta property="og:image" content="https://cometpdf.com/assets/app-preview.png">
@@ -189,8 +189,8 @@
   <header>
     <div class="wrap hero">
       <div>
-        <h1>Convert files to PDF offline.</h1>
-        <p class="lead">CometPDF turns Office files, images, Outlook emails, text files, and existing PDFs into clean PDF documents on Windows. It can also export PDFs to PNG, JPG, TXT, Word, and PowerPoint. No uploads. No account.</p>
+        <h1>Convert files to and from PDF offline.</h1>
+        <p class="lead">CometPDF turns Office files, images, Outlook emails, text files, and existing PDFs into clean PDF documents on Windows. It also exports PDFs to PNG, JPG, TXT, Word, and PowerPoint for simple reverse PDF conversion. No uploads. No account.</p>
         <div class="actions" id="download">
           <a class="button store" href="#store">Microsoft Store coming soon</a>
           <a class="button primary" href="downloads/CometPDFSetup-1.1.0.exe">Download Installer</a>
@@ -202,6 +202,12 @@
           Installer checksum is published on the <a href="security/">Security page</a>.
           This unsigned first release may show an unknown publisher warning in Windows or Chrome.
           <span class="hash">SHA256: 947E4F4BCD01C02F95D9448F774B0F8487D9C178AD1E39E1C750EE7F25E6DBCF</span>
+        </p>
+        <p class="trust">
+          <strong>Windows may warn you before installing</strong><br>
+          CometPDF is not yet code-signed, so Windows SmartScreen or Chrome may show an "unknown publisher" warning when you download or run the installer.
+          This is expected. The installer has 0 detections on VirusTotal across 70 antivirus engines. To proceed: click More info → Run anyway.
+          If you prefer to skip this entirely, use the Portable ZIP — no installation, no warning.
         </p>
       </div>
       <img class="preview" src="assets/app-preview.png" alt="CometPDF application preview">
@@ -224,7 +230,7 @@
       </div>
       <div class="feature">
         <h2>PDF export tools</h2>
-        <p>Export PDFs to PNG or JPG images, extract text to TXT, create PowerPoint slides from PDF pages, or preserve PDF pages visually inside Word documents.</p>
+        <p>Use CometPDF as a reverse PDF converter too: export PDFs to PNG or JPG images, extract text to TXT, create PowerPoint slides from PDF pages, or preserve PDF pages visually inside Word documents.</p>
       </div>
     </div>
   </section>
@@ -232,7 +238,7 @@
   <section class="supported">
     <div class="wrap">
       <h2>Supported Files</h2>
-      <p class="lead">Built for everyday office work, email archiving, and quick PDF delivery.</p>
+      <p class="lead">Built for everyday office work, email archiving, reverse PDF conversion, and quick PDF delivery.</p>
       <div class="chips">
         <a class="chip" href="word-to-pdf/">DOC / DOCX / RTF</a>
         <a class="chip" href="excel-to-pdf/">XLS / XLSX / XLSM</a>
@@ -241,8 +247,10 @@
         <a class="chip" href="image-to-pdf/">JPG / PNG / WEBP / TIFF</a>
         <span class="chip">TXT / CSV / HTML / XML / JSON</span>
         <span class="chip">Merge PDFs</span>
-        <span class="chip">PDF to PNG / JPG</span>
-        <span class="chip">PDF to TXT / DOCX / PPTX</span>
+        <a class="chip" href="pdf-to-image/">PDF to PNG / JPG</a>
+        <a class="chip" href="pdf-to-text/">PDF to TXT</a>
+        <a class="chip" href="pdf-to-word/">PDF to Word</a>
+        <a class="chip" href="pdf-to-powerpoint/">PDF to PowerPoint</a>
         <span class="chip">Right-click to PDF</span>
         <span class="chip">Installer or portable</span>
       </div>
