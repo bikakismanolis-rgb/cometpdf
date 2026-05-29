@@ -12,7 +12,7 @@ Convert Office files, images, emails, and text files to PDF privately on Windows
 
 ## Full Description
 
-CometPDF is a simple Windows app for turning everyday files into PDF documents.
+CometPDF is a simple Windows app for turning everyday files into PDF documents and exporting PDFs into useful formats.
 
 It is built for people who want a private, local alternative to online PDF converters. Add files, choose an output folder, and convert them on your computer without uploading documents to a website.
 
@@ -25,6 +25,7 @@ CometPDF supports common office workflows:
 - Emails: EML and Outlook MSG
 - Text and data files: TXT, CSV, HTML, XML, JSON
 - Existing PDFs
+- PDF export to PNG, JPG, TXT, DOCX, and PPTX
 
 When Microsoft Office, Outlook, or LibreOffice are installed, CometPDF uses their local export features for print-like PDF output. Built-in fallback converters are included for several formats when native export is unavailable.
 
@@ -33,6 +34,10 @@ Key features:
 - Local file conversion
 - Batch conversion
 - Optional PDF merge
+- PDF to image export
+- PDF text extraction
+- PDF to PowerPoint slides
+- PDF to Word as visual page-preserving DOCX
 - Output folder selection
 - Automatic PDF opening
 - Portable and installer builds outside the Store
@@ -77,4 +82,3 @@ https://cometpdf.com/
 CometPDF processes selected files locally on the user's Windows computer. It does not require a user account and does not upload documents to CometPDF servers.
 
 For the best Office document fidelity, CometPDF can use locally installed Microsoft Office, Outlook, or LibreOffice export functionality. If those applications are not installed or cannot export a file, CometPDF uses available fallback conversion paths where possible.
-

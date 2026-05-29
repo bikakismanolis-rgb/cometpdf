@@ -20,7 +20,7 @@ This is the fastest route. Microsoft allows unpackaged Win32 apps in the Store b
 Use:
 
 ```text
-https://cometpdf.com/downloads/CometPDFSetup-1.0.0.exe
+https://cometpdf.com/downloads/CometPDFSetup-1.1.0.exe
 ```
 
 This is easier to submit, but the installer still needs to be trusted and clean.

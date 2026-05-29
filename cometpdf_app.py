@@ -36,7 +36,7 @@ except Exception:
 
 
 APP_NAME = "CometPDF"
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.1.0"
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp", ".heic", ".heif"}
 TEXT_EXTS = {".txt", ".csv", ".log", ".md", ".html", ".htm", ".xml", ".json"}
 WORD_EXTS = {".doc", ".docx", ".rtf", ".odt"}
@@ -44,6 +44,14 @@ EXCEL_EXTS = {".xls", ".xlsx", ".xlsm", ".ods", ".csv"}
 POWERPOINT_EXTS = {".ppt", ".pptx", ".odp"}
 EMAIL_EXTS = {".eml", ".msg"}
 SUPPORTED_EXTS = IMAGE_EXTS | TEXT_EXTS | WORD_EXTS | EXCEL_EXTS | POWERPOINT_EXTS | EMAIL_EXTS | {".pdf"}
+CONVERSION_MODES = {
+    "to_pdf": "Files to PDF",
+    "pdf_png": "PDF to PNG images",
+    "pdf_jpg": "PDF to JPG images",
+    "pdf_txt": "PDF to TXT",
+    "pdf_pptx": "PDF to PowerPoint",
+    "pdf_docx": "PDF to Word",
+}
 SETTINGS_FILE = Path(__file__).resolve().parent / "cometpdf_settings.json"
 
 
@@ -59,6 +67,7 @@ def load_settings() -> dict:
         "auto_open": True,
         "open_folder_when_done": False,
         "combine_outputs": False,
+        "mode": "to_pdf",
     }
     if not SETTINGS_FILE.exists():
         return defaults
@@ -77,6 +86,17 @@ def save_settings(settings: dict) -> None:
 
 def default_output_path(input_path: Path) -> Path:
     return input_path.parent / f"{input_path.stem}.pdf"
+
+
+def mode_output_suffix(mode: str) -> str:
+    return {
+        "to_pdf": ".pdf",
+        "pdf_txt": ".txt",
+        "pdf_pptx": ".pptx",
+        "pdf_docx": ".docx",
+        "pdf_png": ".png",
+        "pdf_jpg": ".jpg",
+    }.get(mode, ".pdf")
 
 
 def unique_path(path: Path) -> Path:
@@ -107,6 +127,171 @@ def merge_pdf_files(pdf_paths: list[Path], output_path: Path) -> Path:
     if not output_path.exists() or output_path.stat().st_size == 0:
         raise RuntimeError("Δεν δημιουργήθηκε έγκυρο ενιαίο PDF.")
     return output_path
+
+
+def require_pdf(input_path: Path) -> None:
+    if input_path.suffix.lower() != ".pdf":
+        raise RuntimeError("This output mode only accepts PDF input files.")
+
+
+def pdf_to_images(input_path: Path, output_base: Path, image_format: str) -> list[Path]:
+    require_pdf(input_path)
+    try:
+        import fitz
+    except Exception as exc:
+        raise RuntimeError("PDF image export needs PyMuPDF.") from exc
+
+    image_format = image_format.lower()
+    if image_format not in {"png", "jpg", "jpeg"}:
+        raise RuntimeError("Unsupported image export format.")
+    ext = ".jpg" if image_format in {"jpg", "jpeg"} else ".png"
+
+    doc = fitz.open(str(input_path))
+    try:
+        if doc.page_count == 0:
+            raise RuntimeError("The PDF has no pages.")
+
+        output_base.parent.mkdir(parents=True, exist_ok=True)
+        outputs: list[Path] = []
+        zoom = 2.0
+        matrix = fitz.Matrix(zoom, zoom)
+        for page_index in range(doc.page_count):
+            page = doc.load_page(page_index)
+            pixmap = page.get_pixmap(matrix=matrix, alpha=False)
+            output_path = unique_path(output_base.parent / f"{output_base.stem}_page_{page_index + 1:03d}{ext}")
+            pixmap.save(str(output_path))
+            outputs.append(output_path)
+        return outputs
+    finally:
+        doc.close()
+
+
+def pdf_to_text(input_path: Path, output_path: Path) -> list[Path]:
+    require_pdf(input_path)
+    from pypdf import PdfReader
+
+    reader = PdfReader(str(input_path))
+    parts: list[str] = []
+    for index, page in enumerate(reader.pages, start=1):
+        text = page.extract_text() or ""
+        parts.append(f"--- Page {index} ---\n{text.strip()}\n")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text("\n".join(parts).strip() + "\n", encoding="utf-8")
+    return [output_path]
+
+
+def pdf_to_pptx(input_path: Path, output_path: Path) -> list[Path]:
+    require_pdf(input_path)
+    try:
+        import fitz
+        from pptx import Presentation
+        from pptx.util import Inches
+    except Exception as exc:
+        raise RuntimeError("PDF to PowerPoint needs PyMuPDF and python-pptx.") from exc
+
+    doc = fitz.open(str(input_path))
+    try:
+        if doc.page_count == 0:
+            raise RuntimeError("The PDF has no pages.")
+
+        first_rect = doc.load_page(0).rect
+        prs = Presentation()
+        prs.slide_width = Inches(first_rect.width / 72)
+        prs.slide_height = Inches(first_rect.height / 72)
+        blank = prs.slide_layouts[6]
+
+        with tempfile.TemporaryDirectory(prefix="cometpdf_pdf_pptx_") as tmp:
+            tmp_dir = Path(tmp)
+            zoom = 2.0
+            matrix = fitz.Matrix(zoom, zoom)
+            for page_index in range(doc.page_count):
+                page = doc.load_page(page_index)
+                pixmap = page.get_pixmap(matrix=matrix, alpha=False)
+                image_path = tmp_dir / f"page_{page_index + 1:03d}.png"
+                pixmap.save(str(image_path))
+                slide = prs.slides.add_slide(blank)
+                slide.shapes.add_picture(str(image_path), 0, 0, width=prs.slide_width, height=prs.slide_height)
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        prs.save(str(output_path))
+        return [output_path]
+    finally:
+        doc.close()
+
+
+def pdf_to_docx(input_path: Path, output_path: Path) -> list[Path]:
+    require_pdf(input_path)
+    try:
+        import fitz
+        from docx import Document
+        from docx.shared import Inches
+    except Exception as exc:
+        raise RuntimeError("PDF to Word needs PyMuPDF and python-docx.") from exc
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    doc = fitz.open(str(input_path))
+    try:
+        if doc.page_count == 0:
+            raise RuntimeError("The PDF has no pages.")
+
+        word = Document()
+        section = word.sections[0]
+        section.top_margin = Inches(0)
+        section.bottom_margin = Inches(0)
+        section.left_margin = Inches(0)
+        section.right_margin = Inches(0)
+
+        with tempfile.TemporaryDirectory(prefix="cometpdf_pdf_docx_") as tmp:
+            tmp_dir = Path(tmp)
+            matrix = fitz.Matrix(2.0, 2.0)
+            for page_index in range(doc.page_count):
+                page = doc.load_page(page_index)
+                rect = page.rect
+                if page_index == 0:
+                    section.page_width = Inches(rect.width / 72)
+                    section.page_height = Inches(rect.height / 72)
+                elif page_index > 0:
+                    word.add_page_break()
+
+                image_path = tmp_dir / f"page_{page_index + 1:03d}.png"
+                page.get_pixmap(matrix=matrix, alpha=False).save(str(image_path))
+                paragraph = word.add_paragraph()
+                paragraph.paragraph_format.space_after = 0
+                run = paragraph.add_run()
+                run.add_picture(str(image_path), width=section.page_width)
+
+        word.save(str(output_path))
+    finally:
+        doc.close()
+    return [output_path]
+
+
+def convert_file(input_file: str | Path, output_file: str | Path | None = None, mode: str = "to_pdf") -> list[Path]:
+    input_path = Path(input_file).expanduser().resolve()
+    if not input_path.exists():
+        raise FileNotFoundError(f"File not found: {input_path}")
+
+    output_suffix = mode_output_suffix(mode)
+    if output_file:
+        output_path = Path(output_file).resolve()
+    else:
+        output_path = input_path.parent / f"{input_path.stem}{output_suffix}"
+    output_path = unique_path(output_path)
+
+    if mode == "to_pdf":
+        return [convert_to_pdf(input_path, output_path)]
+    if mode == "pdf_png":
+        return pdf_to_images(input_path, output_path.with_suffix(""), "png")
+    if mode == "pdf_jpg":
+        return pdf_to_images(input_path, output_path.with_suffix(""), "jpg")
+    if mode == "pdf_txt":
+        return pdf_to_text(input_path, output_path.with_suffix(".txt"))
+    if mode == "pdf_pptx":
+        return pdf_to_pptx(input_path, output_path.with_suffix(".pptx"))
+    if mode == "pdf_docx":
+        return pdf_to_docx(input_path, output_path.with_suffix(".docx"))
+    raise RuntimeError(f"Unsupported conversion mode: {mode}")
 
 
 def register_font() -> str:
@@ -1086,8 +1271,8 @@ class CometPDFApp(BaseTk):
     def __init__(self) -> None:
         super().__init__()
         self.title(APP_NAME)
-        self.geometry("920x680")
-        self.minsize(560, 420)
+        self.geometry("920x740")
+        self.minsize(580, 460)
         self.configure(bg="#f5f7fb")
 
         self.settings = load_settings()
@@ -1095,9 +1280,14 @@ class CometPDFApp(BaseTk):
         self.outputs: list[Path] = []
         self.is_running = False
 
+        saved_mode = self.settings.get("mode", "to_pdf")
+        if saved_mode not in CONVERSION_MODES:
+            saved_mode = "to_pdf"
+
         self.output_dir = tk.StringVar(value=self.settings["output_dir"])
-        self.status = tk.StringVar(value="Πρόσθεσε ένα ή περισσότερα αρχεία και πάτησε Μετατροπή.")
-        self.count_label = tk.StringVar(value="0 αρχεία")
+        self.mode = tk.StringVar(value=saved_mode)
+        self.status = tk.StringVar(value="Add one or more files and choose a conversion mode.")
+        self.count_label = tk.StringVar(value="0 files")
         self.auto_open = tk.BooleanVar(value=bool(self.settings["auto_open"]))
         self.open_folder_when_done = tk.BooleanVar(value=bool(self.settings["open_folder_when_done"]))
         self.combine_outputs = tk.BooleanVar(value=bool(self.settings["combine_outputs"]))
@@ -1138,29 +1328,24 @@ class CometPDFApp(BaseTk):
         ttk.Label(header, text="CometPDF", style="Title.TLabel").pack(anchor="w")
         ttk.Label(
             header,
-            text="Μετατροπή αρχείων σε PDF με όσο γίνεται πιστή εμφάνιση.",
+            text="Convert files to PDF, or export PDFs to images, text, Word, and PowerPoint.",
             style="Subtle.TLabel",
         ).pack(anchor="w", pady=(2, 18))
 
         picker = ttk.Frame(root, padding=18, style="Panel.TFrame")
         picker.pack(fill="x", pady=(0, 14))
+        ttk.Label(picker, text="Add files", style="Panel.TLabel", font=("Segoe UI", 13, "bold")).pack(anchor="w")
         ttk.Label(
             picker,
-            text="Πρόσθεσε αρχεία",
-            style="Panel.TLabel",
-            font=("Segoe UI", 13, "bold"),
-        ).pack(anchor="w")
-        ttk.Label(
-            picker,
-            text="Σύρε αρχεία εδώ ή επίλεξε πολλά αρχεία μαζί. Τα PDF θα μπουν στον φάκελο εξόδου.",
+            text="Drag files here or select several files at once. Results are saved in the output folder.",
             style="Panel.TLabel",
         ).pack(anchor="w", pady=(3, 12))
 
         picker_buttons = ttk.Frame(picker, style="Panel.TFrame")
         picker_buttons.pack(fill="x")
-        ttk.Button(picker_buttons, text="Προσθήκη αρχείων...", command=self.choose_files).pack(side="left")
-        ttk.Button(picker_buttons, text="Αφαίρεση επιλεγμένων", command=self.remove_selected).pack(side="left", padx=(8, 0))
-        ttk.Button(picker_buttons, text="Καθαρισμός", command=self.clear_files).pack(side="left", padx=(8, 0))
+        ttk.Button(picker_buttons, text="Add files...", command=self.choose_files).pack(side="left")
+        ttk.Button(picker_buttons, text="Remove selected", command=self.remove_selected).pack(side="left", padx=(8, 0))
+        ttk.Button(picker_buttons, text="Clear", command=self.clear_files).pack(side="left", padx=(8, 0))
         ttk.Label(picker_buttons, textvariable=self.count_label, style="Panel.TLabel").pack(side="right")
 
         list_frame = ttk.Frame(root, style="App.TFrame")
@@ -1185,31 +1370,46 @@ class CometPDFApp(BaseTk):
 
         output = ttk.Frame(root, padding=14, style="Panel.TFrame")
         output.pack(fill="x", pady=(0, 14))
-        ttk.Label(output, text="Φάκελος εξόδου", style="Panel.TLabel").grid(row=0, column=0, sticky="w")
+        ttk.Label(output, text="Output folder", style="Panel.TLabel").grid(row=0, column=0, sticky="w")
         ttk.Entry(output, textvariable=self.output_dir).grid(row=1, column=0, sticky="ew", pady=(6, 0), padx=(0, 8))
-        ttk.Button(output, text="Αλλαγή...", command=self.choose_output_dir).grid(row=1, column=1, sticky="e", pady=(6, 0))
+        ttk.Button(output, text="Change...", command=self.choose_output_dir).grid(row=1, column=1, sticky="e", pady=(6, 0))
         output.columnconfigure(0, weight=1)
+
+        mode_box = ttk.Frame(root, padding=14, style="Panel.TFrame")
+        mode_box.pack(fill="x", pady=(0, 14))
+        ttk.Label(mode_box, text="Conversion mode", style="Panel.TLabel").grid(row=0, column=0, sticky="w")
+        self.mode_combo = ttk.Combobox(mode_box, state="readonly", values=list(CONVERSION_MODES.values()), width=34)
+        self.mode_combo.set(CONVERSION_MODES[self.mode.get()])
+        self.mode_combo.grid(row=1, column=0, sticky="w", pady=(6, 0))
+        self.mode_combo.bind("<<ComboboxSelected>>", self.on_mode_changed)
+        ttk.Label(
+            mode_box,
+            text="Use Files to PDF for normal conversion. Use PDF modes only when the input is a PDF.",
+            style="Panel.TLabel",
+        ).grid(row=2, column=0, sticky="w", pady=(8, 0))
 
         options = ttk.Frame(root, style="App.TFrame")
         options.pack(fill="x", pady=(0, 12))
-        ttk.Checkbutton(options, text="Άνοιγμα PDF όταν τελειώσει ένα αρχείο", variable=self.auto_open, command=self.save_current_settings).pack(anchor="w")
-        ttk.Checkbutton(options, text="Άνοιγμα φακέλου στο τέλος", variable=self.open_folder_when_done, command=self.save_current_settings).pack(anchor="w", pady=(3, 0))
-        ttk.Checkbutton(options, text="Ένωση όλων σε ένα PDF", variable=self.combine_outputs, command=self.save_current_settings).pack(anchor="w", pady=(3, 0))
+        ttk.Checkbutton(options, text="Open result after single-file conversion", variable=self.auto_open, command=self.save_current_settings).pack(anchor="w")
+        ttk.Checkbutton(options, text="Open output folder when done", variable=self.open_folder_when_done, command=self.save_current_settings).pack(anchor="w", pady=(3, 0))
+        self.combine_check = ttk.Checkbutton(options, text="Merge all PDF outputs into one PDF", variable=self.combine_outputs, command=self.save_current_settings)
+        self.combine_check.pack(anchor="w", pady=(3, 0))
 
         actions = ttk.Frame(root, style="App.TFrame")
         actions.pack(fill="x", pady=(0, 12))
-        self.convert_button = ttk.Button(actions, text="Μετατροπή σε PDF", style="Accent.TButton", command=self.convert_all)
+        self.convert_button = ttk.Button(actions, text="Convert", style="Accent.TButton", command=self.convert_all)
         self.convert_button.grid(row=0, column=0, sticky="w", padx=(0, 8), pady=(0, 8))
-        ttk.Button(actions, text="Προβολή τελευταίου PDF", command=self.open_last_pdf).grid(row=0, column=1, sticky="w", padx=(0, 8), pady=(0, 8))
-        ttk.Button(actions, text="Άνοιγμα φακέλου", command=self.open_output_folder).grid(row=0, column=2, sticky="w", padx=(0, 8), pady=(0, 8))
-        ttk.Button(actions, text="Πληροφορίες", command=self.show_about).grid(row=0, column=3, sticky="w", pady=(0, 8))
+        ttk.Button(actions, text="Open last result", command=self.open_last_pdf).grid(row=0, column=1, sticky="w", padx=(0, 8), pady=(0, 8))
+        ttk.Button(actions, text="Open folder", command=self.open_output_folder).grid(row=0, column=2, sticky="w", padx=(0, 8), pady=(0, 8))
+        ttk.Button(actions, text="About", command=self.show_about).grid(row=0, column=3, sticky="w", pady=(0, 8))
 
         self.progress = ttk.Progressbar(root, variable=self.progress_value, maximum=100)
         self.progress.pack(fill="x", pady=(0, 10))
         ttk.Label(root, textvariable=self.status, style="Status.TLabel", wraplength=820).pack(fill="x")
 
-        supported = "Υποστηρίζει: Office, PDF, εικόνες, email, TXT/CSV/HTML/XML/JSON."
+        supported = "Supports: Office, PDF, images, email, TXT/CSV/HTML/XML/JSON. PDF export: PNG, JPG, TXT, PPTX, DOCX."
         ttk.Label(root, text=supported, style="Subtle.TLabel").pack(anchor="w", pady=(10, 0))
+        self.update_mode_state()
 
     def on_scroll_content_configure(self, _event=None) -> None:
         self.scroll_canvas.configure(scrollregion=self.scroll_canvas.bbox("all"))
@@ -1246,19 +1446,43 @@ class CometPDFApp(BaseTk):
             paths = [event.data]
         self.add_files(paths)
 
+    def selected_mode_key(self) -> str:
+        selected = self.mode_combo.get() if hasattr(self, "mode_combo") else CONVERSION_MODES[self.mode.get()]
+        for key, label in CONVERSION_MODES.items():
+            if label == selected:
+                return key
+        return "to_pdf"
+
+    def on_mode_changed(self, _event=None) -> None:
+        self.mode.set(self.selected_mode_key())
+        self.update_mode_state()
+        self.save_current_settings()
+
+    def update_mode_state(self) -> None:
+        mode = self.mode.get()
+        if hasattr(self, "combine_check"):
+            self.combine_check.configure(state="normal" if mode == "to_pdf" else "disabled")
+        if hasattr(self, "convert_button"):
+            self.convert_button.configure(text="Convert to PDF" if mode == "to_pdf" else "Export PDF")
+        if mode == "to_pdf":
+            self.status.set("Ready for file-to-PDF conversion.")
+        else:
+            self.status.set(f"Ready for {CONVERSION_MODES[mode]}. Add PDF files only.")
+
     def save_current_settings(self) -> None:
         self.settings["output_dir"] = self.output_dir.get()
         self.settings["auto_open"] = bool(self.auto_open.get())
         self.settings["open_folder_when_done"] = bool(self.open_folder_when_done.get())
         self.settings["combine_outputs"] = bool(self.combine_outputs.get())
+        self.settings["mode"] = self.mode.get()
         save_settings(self.settings)
 
     def choose_files(self) -> None:
         paths = filedialog.askopenfilenames(
-            title="Προσθήκη αρχείων",
+            title="Add files",
             filetypes=[
-                ("Υποστηριζόμενα αρχεία", " ".join(f"*{ext}" for ext in sorted(SUPPORTED_EXTS))),
-                ("Όλα τα αρχεία", "*.*"),
+                ("Supported files", " ".join(f"*{ext}" for ext in sorted(SUPPORTED_EXTS))),
+                ("All files", "*.*"),
             ],
         )
         self.add_files(paths)
@@ -1288,16 +1512,16 @@ class CometPDFApp(BaseTk):
         self.outputs.clear()
         self.progress_value.set(0)
         self.refresh_count()
-        self.status.set("Η λίστα καθάρισε.")
+        self.status.set("The file list was cleared.")
 
     def refresh_count(self) -> None:
         count = len(self.files)
-        self.count_label.set(f"{count} αρχείο" if count == 1 else f"{count} αρχεία")
+        self.count_label.set(f"{count} file" if count == 1 else f"{count} files")
         if count:
-            self.status.set("Έτοιμο για μετατροπή.")
+            self.status.set("Ready to convert.")
 
     def choose_output_dir(self) -> None:
-        folder = filedialog.askdirectory(title="Φάκελος εξόδου", initialdir=self.output_dir.get() or str(output_folder()))
+        folder = filedialog.askdirectory(title="Output folder", initialdir=self.output_dir.get() or str(output_folder()))
         if folder:
             self.output_dir.set(folder)
             self.save_current_settings()
@@ -1306,14 +1530,19 @@ class CometPDFApp(BaseTk):
         if self.is_running:
             return
         if not self.files:
-            messagebox.showwarning(APP_NAME, "Πρόσθεσε πρώτα ένα ή περισσότερα αρχεία.")
+            messagebox.showwarning(APP_NAME, "Add one or more files first.")
+            return
+
+        mode = self.mode.get()
+        if mode != "to_pdf" and any(path.suffix.lower() != ".pdf" for path in self.files):
+            messagebox.showwarning(APP_NAME, "PDF export modes only accept PDF input files.")
             return
 
         out_dir = Path(self.output_dir.get()).expanduser()
         try:
             out_dir.mkdir(parents=True, exist_ok=True)
         except Exception as exc:
-            messagebox.showerror(APP_NAME, f"Δεν μπορώ να ανοίξω τον φάκελο εξόδου:\n{exc}")
+            messagebox.showerror(APP_NAME, f"Could not open the output folder:\n{exc}")
             return
 
         self.save_current_settings()
@@ -1321,41 +1550,44 @@ class CometPDFApp(BaseTk):
         self.outputs.clear()
         self.convert_button.configure(state="disabled")
         self.progress_value.set(0)
-        self.status.set("Ξεκινά η μετατροπή...")
+        self.status.set("Starting conversion...")
 
         worker = threading.Thread(
             target=self._convert_worker,
-            args=(list(self.files), out_dir, bool(self.auto_open.get()), bool(self.combine_outputs.get())),
+            args=(list(self.files), out_dir, bool(self.auto_open.get()), bool(self.combine_outputs.get()), mode),
             daemon=True,
         )
         worker.start()
 
-    def _convert_worker(self, files: list[Path], out_dir: Path, auto_open: bool, combine_outputs: bool) -> None:
+    def _convert_worker(self, files: list[Path], out_dir: Path, auto_open: bool, combine_outputs: bool, mode: str) -> None:
         errors: list[str] = []
         converted: list[Path] = []
         total = len(files)
         for index, input_path in enumerate(files, start=1):
-            self.after(0, self._set_status, f"Μετατροπή {index}/{total}: {input_path.name}")
-            output_path = unique_path(out_dir / f"{input_path.stem}.pdf")
+            self.after(0, self._set_status, f"Converting {index}/{total}: {input_path.name}")
+            output_path = unique_path(out_dir / f"{input_path.stem}{mode_output_suffix(mode)}")
             try:
-                result = convert_to_pdf(input_path, output_path)
-                converted.append(result)
-                self.outputs.append(result)
+                results = convert_file(input_path, output_path, mode)
+                converted.extend(results)
+                self.outputs.extend(results)
                 if auto_open and total == 1:
-                    os.startfile(result)
+                    if len(results) == 1:
+                        os.startfile(results[0])
+                    else:
+                        os.startfile(out_dir)
             except Exception as exc:
                 errors.append(f"{input_path.name}: {self.human_error(exc)}")
             self.after(0, self.progress_value.set, (index / total) * 100)
 
-        if combine_outputs and len(converted) > 1:
+        if mode == "to_pdf" and combine_outputs and len(converted) > 1:
             try:
-                self.after(0, self._set_status, "Ένωση PDF σε ένα αρχείο...")
+                self.after(0, self._set_status, "Merging PDFs into one file...")
                 merged = merge_pdf_files(converted, unique_path(out_dir / "combined.pdf"))
                 self.outputs.append(merged)
                 if auto_open:
                     os.startfile(merged)
             except Exception as exc:
-                errors.append(f"Ένωση PDF: {self.human_error(exc)}")
+                errors.append(f"Merge PDFs: {self.human_error(exc)}")
 
         self.after(0, self._finish_conversion, errors)
 
@@ -1365,12 +1597,13 @@ class CometPDFApp(BaseTk):
     def _finish_conversion(self, errors: list[str]) -> None:
         self.is_running = False
         self.convert_button.configure(state="normal")
+        self.update_mode_state()
         success_count = len(self.outputs)
         if errors:
-            self.status.set(f"Ολοκληρώθηκε με {success_count} επιτυχίες και {len(errors)} αποτυχίες.")
-            messagebox.showwarning(APP_NAME, "Κάποια αρχεία δεν μετατράπηκαν:\n\n" + "\n".join(errors[:8]))
+            self.status.set(f"Completed with {success_count} results and {len(errors)} errors.")
+            messagebox.showwarning(APP_NAME, "Some files were not converted:\n\n" + "\n".join(errors[:8]))
         else:
-            self.status.set(f"Έτοιμο. Δημιουργήθηκαν {success_count} PDF.")
+            self.status.set(f"Done. Created {success_count} result file(s).")
         if self.open_folder_when_done.get() and success_count:
             self.open_output_folder()
 
@@ -1379,7 +1612,7 @@ class CometPDFApp(BaseTk):
         replacements = {
             "COM": "Microsoft Office",
             "VBScript": "Office automation",
-            "Invalid procedure call or argument": "Το πρόγραμμα δεν μπόρεσε να εκτυπώσει αυτόν τον τύπο αρχείου.",
+            "Invalid procedure call or argument": "The source application could not export this file type.",
         }
         for old, new in replacements.items():
             text = text.replace(old, new)
@@ -1389,7 +1622,7 @@ class CometPDFApp(BaseTk):
         if self.outputs and self.outputs[-1].exists():
             os.startfile(self.outputs[-1])
         else:
-            messagebox.showinfo(APP_NAME, "Δεν υπάρχει ακόμη PDF για προβολή.")
+            messagebox.showinfo(APP_NAME, "There is no result file yet.")
 
     def open_output_folder(self) -> None:
         folder = Path(self.output_dir.get()).expanduser()
@@ -1400,25 +1633,33 @@ class CometPDFApp(BaseTk):
         messagebox.showinfo(
             APP_NAME,
             f"{APP_NAME} {APP_VERSION}\n\n"
-            "Μετατροπή αρχείων σε PDF για καθημερινή χρήση.\n\n"
-            "Χρησιμοποιεί Microsoft Office/Outlook ή LibreOffice όπου υπάρχουν, "
-            "και ενσωματωμένους μετατροπείς για εικόνες, email και κείμενα.",
+            "Convert files to PDF and export PDFs to images, text, Word, and PowerPoint.\n\n"
+            "Office conversion uses Microsoft Office, Outlook, or LibreOffice when available. "
+            "PDF export uses local processing on this computer.",
         )
-
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Simple file to PDF converter.")
     parser.add_argument("--convert", help="Input file to convert without opening the GUI.")
     parser.add_argument("--output", help="Output PDF path for --convert.")
+    parser.add_argument(
+        "--mode",
+        choices=sorted(CONVERSION_MODES),
+        default="to_pdf",
+        help="Conversion mode for --convert.",
+    )
     parser.add_argument("--open", action="store_true", help="Open the PDF after converting.")
     args = parser.parse_args()
 
     if args.convert:
         try:
-            output = convert_to_pdf(args.convert, args.output)
+            outputs = convert_file(args.convert, args.output, args.mode)
             if args.open:
-                os.startfile(output)
-            print(output)
+                if len(outputs) == 1:
+                    os.startfile(outputs[0])
+                elif outputs:
+                    os.startfile(outputs[0].parent)
+            print("\n".join(str(path) for path in outputs))
             return 0
         except Exception as exc:
             print(exc, file=sys.stderr)

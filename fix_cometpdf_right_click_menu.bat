@@ -7,7 +7,7 @@ if not exist "%APP_EXE%" (
   echo CometPDF.exe was not found at:
   echo %APP_EXE%
   echo.
-  echo Run CometPDFSetup-1.0.0.exe first, then run this file again.
+  echo Run CometPDFSetup-1.1.0.exe first, then run this file again.
   pause
   exit /b 1
 )
