@@ -1,76 +1,91 @@
 # CometPDF
 
-CometPDF is a small Windows desktop app for converting everyday files to PDF locally.
+CometPDF is a free Windows desktop app for local, no-upload PDF conversion.
 
-It is built for users who want a simple, private way to convert Office documents, images, emails, text files, existing PDFs, and PDF exports without uploading files to an online service.
+It converts everyday files to PDF and also exports PDFs back to useful formats. It is built for people who want a simple PDF tool for private files, office work, email archiving, batch conversion, and quick document delivery without sending files to an online converter.
 
-## Quick Start
+Website: https://cometpdf.com
 
-1. Run `CometPDFSetup-1.1.0.exe`, or open the portable `CometPDF.exe`.
-2. Add files with the file picker or drag them into the app.
-3. Choose an output folder if needed.
-4. Click `Convert to PDF`.
-5. The PDF is created locally on the computer.
+Download: https://cometpdf.com/download/
 
-Settings are saved in `cometpdf_settings.json`.
+Security: https://cometpdf.com/security/
 
-## PDF Export Tools
+## Why CometPDF?
 
-CometPDF can also export PDF files to other formats:
+- No uploads: files are converted on your Windows computer.
+- Offline-first: normal conversion works without an internet connection.
+- Batch-friendly: add many files and convert them in one run.
+- Optional merge: combine PDF outputs into one PDF.
+- Installer or portable: choose setup integration or a no-install ZIP.
+- Windows Explorer workflow: installer can add right-click Convert to PDF.
+- VirusTotal checked: the 1.1.0 installer has 0 detections across 70 antivirus engines.
 
-- PDF to PNG images
-- PDF to JPG images
-- PDF to TXT
-- PDF to PowerPoint, with each PDF page as a slide image
-- PDF to Word, with each PDF page preserved visually inside a DOCX file
+## Download
 
-PDF to Word in this release prioritizes visual fidelity over editability. Scanned PDFs may need OCR, which is not included yet.
+Current release: CometPDF 1.1.0
 
-## Windows Right-Click Conversion
+- Installer: https://cometpdf.com/downloads/CometPDFSetup-1.1.0.exe
+- Portable ZIP: https://cometpdf.com/downloads/CometPDF-1.1.0-portable.zip
 
-The installer can add `Convert to PDF` to the Windows right-click menu.
+The installer is recommended for normal use because it supports Desktop and Start Menu shortcuts, uninstall support, and optional right-click conversion. The Portable ZIP is useful when you want to run CometPDF without installation.
 
-When using right-click conversion, CometPDF saves the PDF next to the original file and opens it automatically.
+## Windows SmartScreen Notice
 
-## Release Files
+CometPDF is not code-signed yet, so Windows SmartScreen or Chrome may show an "unknown publisher" warning when downloading or running the installer. This is expected for a new unsigned Windows app.
 
-- App: `dist\CometPDF.exe`
-- Installer: `release\CometPDFSetup-1.1.0.exe`
-- Portable ZIP: `release\CometPDF-1.1.0-portable.zip`
-- Website ZIP: `release\CometPDF-website.zip`
+The CometPDF 1.1.0 installer has 0 detections on VirusTotal across 70 antivirus engines. To proceed through SmartScreen, click `More info` and then `Run anyway`. If you prefer to avoid installation, use the Portable ZIP.
+
+## SHA256 Checksums
+
+Installer:
+
+```text
+947E4F4BCD01C02F95D9448F774B0F8487D9C178AD1E39E1C750EE7F25E6DBCF
+```
+
+Portable ZIP:
+
+```text
+ABB4B16F669FE1CDE37F6B5BDBBA04D63660C1FEB30BF3BBEE50493DC89367ED
+```
+
+Standalone EXE:
+
+```text
+27C3D6040607B2D3B10C87E161304BECCAF0AFA24463D469AC2C55348BF504F5
+```
 
 ## Supported Files
 
+CometPDF converts these file types to PDF:
+
+- Word documents: `.doc`, `.docx`, `.rtf`, `.odt`
+- Excel spreadsheets: `.xls`, `.xlsx`, `.xlsm`, `.ods`
+- PowerPoint presentations: `.ppt`, `.pptx`, `.odp`
 - Images: `.jpg`, `.jpeg`, `.png`, `.bmp`, `.tif`, `.tiff`, `.webp`
-- HEIC/HEIF: `.heic`, `.heif` when image decoder support is available
-- Text/data: `.txt`, `.csv`, `.log`, `.md`, `.html`, `.htm`, `.xml`, `.json`
-- Email: `.eml`, `.msg`
+- Email files: `.eml`, `.msg`
+- Text and data files: `.txt`, `.csv`, `.log`, `.md`, `.html`, `.htm`, `.xml`, `.json`
 - Existing PDFs: `.pdf`
-- Office files: `.doc`, `.docx`, `.rtf`, `.odt`, `.xls`, `.xlsx`, `.xlsm`, `.ods`, `.ppt`, `.pptx`, `.odp`
+
+HEIC and HEIF support depends on image decoder support being available on the machine.
+
+## PDF Export Tools
+
+CometPDF 1.1.0 can also export PDFs to:
+
+- PNG images
+- JPG images
+- TXT text files
+- Word DOCX, with each PDF page preserved visually
+- PowerPoint PPTX, with each PDF page as a slide image
+
+PDF to Word and PDF to PowerPoint in this release prioritize visual fidelity over full editability. OCR and advanced PDF page tools are planned for a future Pro release.
 
 ## Office Conversion
 
-For Word, Excel, PowerPoint, Outlook MSG files, and LibreOffice/OpenOffice formats, CometPDF first tries native export through Microsoft Office or LibreOffice when available.
-
-That gives the closest result to printing or exporting from the original application.
+For Word, Excel, PowerPoint, Outlook MSG files, and LibreOffice/OpenOffice formats, CometPDF first tries to use native export through Microsoft Office, Outlook, or LibreOffice when available. This gives the closest result to printing or exporting from the original application.
 
 If native export is not available, CometPDF uses built-in fallback renderers for supported file types where possible.
-
-## Website
-
-The static website is in `website/`.
-
-Production domain:
-
-```text
-https://cometpdf.com
-```
-
-For Vercel, set the project root directory to:
-
-```text
-website
-```
 
 ## Command Line
 
@@ -81,3 +96,25 @@ website
 .\dist\CometPDF.exe --convert "example.pdf" --mode pdf_pptx --output "example.pptx"
 .\dist\CometPDF.exe --convert "example.pdf" --mode pdf_docx --output "example.docx"
 ```
+
+## Website
+
+The static website lives in `website/`.
+
+For Vercel, set the project root directory to:
+
+```text
+website
+```
+
+Production domain:
+
+```text
+https://cometpdf.com
+```
+
+## Privacy
+
+CometPDF is designed to convert files locally on your Windows computer. Version 1.1.0 does not include analytics, advertising SDKs, tracking pixels, accounts, cloud sync, or telemetry.
+
+Privacy policy: https://cometpdf.com/privacy/
