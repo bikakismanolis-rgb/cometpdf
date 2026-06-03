@@ -20,7 +20,7 @@ This is the fastest route. Microsoft allows unpackaged Win32 apps in the Store b
 Use:
 
 ```text
-https://cometpdf.com/downloads/CometPDFSetup-1.1.0.exe
+https://cometpdf.com/downloads/CometPDFSetup-1.1.1.exe
 ```
 
 This is easier to submit, but the installer still needs to be trusted and clean.
@@ -48,4 +48,3 @@ Important: the Store/MSIX build may need to skip classic installer behaviors suc
 - Run the installer on a clean Windows user profile.
 - Check the installer with Microsoft Defender.
 - Optionally submit to VirusTotal.
-

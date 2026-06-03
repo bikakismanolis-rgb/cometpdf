@@ -1,5 +1,5 @@
 #define MyAppName "CometPDF"
-#define MyAppVersion "1.1.0"
+#define MyAppVersion "1.1.1"
 #define MyAppPublisher "CometPDF"
 #define MyAppExeName "CometPDF.exe"
 
@@ -12,7 +12,7 @@ DefaultDirName={autopf}\CometPDF
 DefaultGroupName=CometPDF
 DisableProgramGroupPage=yes
 OutputDir=release
-OutputBaseFilename=CometPDFSetup-1.1.0
+OutputBaseFilename=CometPDFSetup-1.1.1
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern

@@ -18,14 +18,14 @@ Security: https://cometpdf.com/security/
 - Optional merge: combine PDF outputs into one PDF.
 - Installer or portable: choose setup integration or a no-install ZIP.
 - Windows Explorer workflow: installer can add right-click Convert to PDF.
-- VirusTotal checked: the 1.1.0 installer has 0 detections across 70 antivirus engines.
+- Security page: SHA256 checksums and VirusTotal scan notes are published on the website.
 
 ## Download
 
-Current release: CometPDF 1.1.0
+Current release: CometPDF 1.1.1
 
-- Installer: https://cometpdf.com/downloads/CometPDFSetup-1.1.0.exe
-- Portable ZIP: https://cometpdf.com/downloads/CometPDF-1.1.0-portable.zip
+- Installer: https://cometpdf.com/downloads/CometPDFSetup-1.1.1.exe
+- Portable ZIP: https://cometpdf.com/downloads/CometPDF-1.1.1-portable.zip
 
 The installer is recommended for normal use because it supports Desktop and Start Menu shortcuts, uninstall support, and optional right-click conversion. The Portable ZIP is useful when you want to run CometPDF without installation.
 
@@ -33,26 +33,26 @@ The installer is recommended for normal use because it supports Desktop and Star
 
 CometPDF is not code-signed yet, so Windows SmartScreen or Chrome may show an "unknown publisher" warning when downloading or running the installer. This is expected for a new unsigned Windows app.
 
-The CometPDF 1.1.0 installer has 0 detections on VirusTotal across 70 antivirus engines. To proceed through SmartScreen, click `More info` and then `Run anyway`. If you prefer to avoid installation, use the Portable ZIP.
+CometPDF is not code-signed yet. To proceed through SmartScreen, click `More info` and then `Run anyway`. If you prefer to avoid installation, use the Portable ZIP. A fresh VirusTotal scan should be published for each rebuilt installer hash.
 
 ## SHA256 Checksums
 
 Installer:
 
 ```text
-947E4F4BCD01C02F95D9448F774B0F8487D9C178AD1E39E1C750EE7F25E6DBCF
+F48D1E6AB71EF8A56263D23092BB9958B0E6C0C3B70D2253A7AE1425470F69F4
 ```
 
 Portable ZIP:
 
 ```text
-ABB4B16F669FE1CDE37F6B5BDBBA04D63660C1FEB30BF3BBEE50493DC89367ED
+5E53B0557F8AE4CA2D854072601D883761B7AC15AF7FB92FDEBC69FE1970D979
 ```
 
 Standalone EXE:
 
 ```text
-27C3D6040607B2D3B10C87E161304BECCAF0AFA24463D469AC2C55348BF504F5
+0683DE7831A0A7A87B4B652917EED1B23F2F6C739B4FB46FFFE28126823FC204
 ```
 
 ## Supported Files
@@ -71,7 +71,7 @@ HEIC and HEIF support depends on image decoder support being available on the ma
 
 ## PDF Export Tools
 
-CometPDF 1.1.0 can also export PDFs to:
+CometPDF 1.1.1 can also export PDFs to:
 
 - PNG images
 - JPG images
@@ -115,6 +115,6 @@ https://cometpdf.com
 
 ## Privacy
 
-CometPDF is designed to convert files locally on your Windows computer. Version 1.1.0 does not include analytics, advertising SDKs, tracking pixels, accounts, cloud sync, or telemetry.
+CometPDF is designed to convert files locally on your Windows computer. Version 1.1.1 does not include analytics, advertising SDKs, tracking pixels, accounts, cloud sync, or telemetry.
 
 Privacy policy: https://cometpdf.com/privacy/

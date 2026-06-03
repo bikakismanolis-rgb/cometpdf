@@ -36,7 +36,7 @@ except Exception:
 
 
 APP_NAME = "CometPDF"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.1.1"
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp", ".heic", ".heif"}
 TEXT_EXTS = {".txt", ".csv", ".log", ".md", ".html", ".htm", ".xml", ".json"}
 WORD_EXTS = {".doc", ".docx", ".rtf", ".odt"}
@@ -53,6 +53,21 @@ CONVERSION_MODES = {
     "pdf_docx": "PDF to Word",
 }
 SETTINGS_FILE = Path(__file__).resolve().parent / "cometpdf_settings.json"
+
+
+def hidden_subprocess_options() -> dict:
+    options: dict = {}
+    if os.name == "nt":
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = 0
+        options["startupinfo"] = startupinfo
+        options["creationflags"] = subprocess.CREATE_NO_WINDOW
+    return options
+
+
+def run_hidden(command: list[str], **kwargs) -> subprocess.CompletedProcess:
+    return subprocess.run(command, **hidden_subprocess_options(), **kwargs)
 
 
 def output_folder() -> Path:
@@ -294,6 +309,35 @@ def convert_file(input_file: str | Path, output_file: str | Path | None = None, 
     raise RuntimeError(f"Unsupported conversion mode: {mode}")
 
 
+def operation_status(input_path: Path, mode: str) -> str:
+    ext = input_path.suffix.lower()
+    if mode == "pdf_png":
+        return "Exporting PDF pages to PNG images..."
+    if mode == "pdf_jpg":
+        return "Exporting PDF pages to JPG images..."
+    if mode == "pdf_txt":
+        return "Extracting selectable PDF text..."
+    if mode == "pdf_pptx":
+        return "Creating PowerPoint slides from PDF pages..."
+    if mode == "pdf_docx":
+        return "Creating a visual Word document from PDF pages..."
+    if ext in WORD_EXTS:
+        return "Starting Word or LibreOffice export..."
+    if ext in EXCEL_EXTS:
+        return "Starting Excel or LibreOffice export..."
+    if ext in POWERPOINT_EXTS:
+        return "Starting PowerPoint or LibreOffice export..."
+    if ext in EMAIL_EXTS:
+        return "Rendering email content locally..."
+    if ext in IMAGE_EXTS:
+        return "Rendering image to PDF..."
+    if ext in TEXT_EXTS:
+        return "Rendering text or data file to PDF..."
+    if ext == ".pdf":
+        return "Preparing PDF output..."
+    return "Converting locally..."
+
+
 def register_font() -> str:
     candidates = [
         Path(r"C:\Windows\Fonts\arial.ttf"),
@@ -508,7 +552,7 @@ def libreoffice_to_pdf(input_path: Path, output_path: Path) -> bool:
         return False
 
     with tempfile.TemporaryDirectory(prefix="cometpdf_lo_") as tmp:
-        result = subprocess.run(
+        result = run_hidden(
             [
                 str(soffice),
                 "--headless",
@@ -534,9 +578,11 @@ def run_powershell(script: str, args: list[str]) -> None:
     with tempfile.TemporaryDirectory(prefix="cometpdf_ps_") as tmp:
         script_path = Path(tmp) / "convert.ps1"
         script_path.write_text(script, encoding="utf-8")
-        result = subprocess.run(
+        result = run_hidden(
             [
                 "powershell",
+                "-WindowStyle",
+                "Hidden",
                 "-NoProfile",
                 "-ExecutionPolicy",
                 "Bypass",
@@ -558,7 +604,7 @@ def run_vbscript(script: str, args: list[str]) -> None:
     with tempfile.TemporaryDirectory(prefix="cometpdf_vbs_") as tmp:
         script_path = Path(tmp) / "convert.vbs"
         script_path.write_text(script, encoding="utf-16")
-        result = subprocess.run(
+        result = run_hidden(
             ["cscript", "//nologo", str(script_path), *args],
             capture_output=True,
             text=True,
@@ -1564,7 +1610,7 @@ class CometPDFApp(BaseTk):
         converted: list[Path] = []
         total = len(files)
         for index, input_path in enumerate(files, start=1):
-            self.after(0, self._set_status, f"Converting {index}/{total}: {input_path.name}")
+            self.after(0, self._set_status, f"{index}/{total}: {input_path.name} - {operation_status(input_path, mode)}")
             output_path = unique_path(out_dir / f"{input_path.stem}{mode_output_suffix(mode)}")
             try:
                 results = convert_file(input_path, output_path, mode)
