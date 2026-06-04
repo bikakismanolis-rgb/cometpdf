@@ -1,14 +1,17 @@
 # CometPDF
 
-CometPDF is a free Windows desktop app for local, no-upload PDF conversion.
+CometPDF is a free Windows desktop app for local, no-upload PDF conversion and PDF export.
 
-It converts everyday files to PDF and also exports PDFs back to useful formats. It is built for people who want a simple PDF tool for private files, office work, email archiving, batch conversion, and quick document delivery without sending files to an online converter.
+It converts everyday files to PDF and also exports PDFs back to useful formats such as images, text, Word, and PowerPoint. CometPDF is built for people who want a simple PDF tool for private files, office work, email archiving, batch conversion, and quick document delivery without sending files to an online converter.
 
-Website: https://cometpdf.com
+## Quick Links
 
-Download: https://cometpdf.com/download/
-
-Security: https://cometpdf.com/security/
+- Website: https://cometpdf.com
+- Download: https://cometpdf.com/download/
+- Security and checksums: https://cometpdf.com/security/
+- Privacy policy: https://cometpdf.com/privacy/
+- Offline PDF converter page: https://cometpdf.com/offline-pdf-converter/
+- No-upload PDF converter page: https://cometpdf.com/no-upload-pdf-converter/
 
 ## Why CometPDF?
 
@@ -33,7 +36,11 @@ The installer is recommended for normal use because it supports Desktop and Star
 
 CometPDF is not code-signed yet, so Windows SmartScreen or Chrome may show an "unknown publisher" warning when downloading or running the installer. This is expected for a new unsigned Windows app.
 
-CometPDF is not code-signed yet. To proceed through SmartScreen, click `More info` and then `Run anyway`. If you prefer to avoid installation, use the Portable ZIP. A fresh VirusTotal scan should be published for each rebuilt installer hash.
+To proceed through SmartScreen, click `More info` and then `Run anyway`. If you prefer to avoid installation, use the Portable ZIP.
+
+The current public installer has 0 detections on VirusTotal across 70 antivirus engines:
+
+https://www.virustotal.com/gui/file/947e4f4bcd01c02f95d9448f774b0f8487d9c178ad1e39e1c750ee7f25e6dbcf/detection
 
 ## SHA256 Checksums
 
@@ -81,6 +88,16 @@ CometPDF 1.1.0 can also export PDFs to:
 
 PDF to Word and PDF to PowerPoint in this release prioritize visual fidelity over full editability. OCR and advanced PDF page tools are planned for a future Pro release.
 
+## Popular Workflows
+
+- Convert Word, Excel, and PowerPoint files to PDF without uploading.
+- Convert Outlook `.msg` and `.eml` email files to PDF for archiving.
+- Convert images and scans to PDF, including multi-page TIFF files.
+- Batch convert many files and optionally merge the resulting PDFs.
+- Export PDF pages to PNG or JPG images.
+- Extract selectable PDF text to TXT.
+- Create visual DOCX or PPTX files from PDF pages.
+
 ## Office Conversion
 
 For Word, Excel, PowerPoint, Outlook MSG files, and LibreOffice/OpenOffice formats, CometPDF first tries to use native export through Microsoft Office, Outlook, or LibreOffice when available. This gives the closest result to printing or exporting from the original application.
@@ -118,3 +135,7 @@ https://cometpdf.com
 CometPDF is designed to convert files locally on your Windows computer. Version 1.1.0 does not include analytics, advertising SDKs, tracking pixels, accounts, cloud sync, or telemetry.
 
 Privacy policy: https://cometpdf.com/privacy/
+
+## Roadmap
+
+Planned future features include OCR, PDF compression, watch folders, stronger PDF page tools, and signed distribution through trusted Windows channels.
