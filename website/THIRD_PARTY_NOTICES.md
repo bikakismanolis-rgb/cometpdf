@@ -1,4 +1,4 @@
-﻿# CometPDF - Third Party Notices
+# CometPDF - Third Party Notices
 
 CometPDF uses the following third-party open-source components:
 

@@ -1,4 +1,4 @@
-﻿# CometPDF Link Building Plan
+# CometPDF Link Building Plan
 
 The goal is not spam. The goal is to put CometPDF where people genuinely look for private/offline PDF conversion tools.
 

@@ -1,4 +1,4 @@
-﻿# CometPDF
+# CometPDF
 
 CometPDF is a free Windows desktop app for local, no-upload PDF conversion.
 

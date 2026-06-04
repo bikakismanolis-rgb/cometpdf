@@ -1,4 +1,4 @@
-﻿# CometPDF SEO Launch Checklist
+# CometPDF SEO Launch Checklist
 
 The current production domain is `https://cometpdf.com`. If the domain changes later, update:
 

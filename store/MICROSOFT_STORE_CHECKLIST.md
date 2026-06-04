@@ -1,4 +1,4 @@
-﻿# Microsoft Store Checklist
+# Microsoft Store Checklist
 
 ## Account
 
