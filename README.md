@@ -1,4 +1,4 @@
-# CometPDF
+﻿# CometPDF
 
 CometPDF is a free Windows desktop app for local, no-upload PDF conversion.
 
@@ -18,11 +18,11 @@ Security: https://cometpdf.com/security/
 - Optional merge: combine PDF outputs into one PDF.
 - Installer or portable: choose setup integration or a no-install ZIP.
 - Windows Explorer workflow: installer can add right-click Convert to PDF.
-- VirusTotal checked: the 1.1.0 installer has 0 detections across 70 antivirus engines.
+- Security page: SHA256 checksums and VirusTotal scan notes are published on the website.
 
 ## Download
 
-Current release: CometPDF 1.1.0
+Current public release: CometPDF 1.1.0
 
 - Installer: https://cometpdf.com/downloads/CometPDFSetup-1.1.0.exe
 - Portable ZIP: https://cometpdf.com/downloads/CometPDF-1.1.0-portable.zip
@@ -33,7 +33,7 @@ The installer is recommended for normal use because it supports Desktop and Star
 
 CometPDF is not code-signed yet, so Windows SmartScreen or Chrome may show an "unknown publisher" warning when downloading or running the installer. This is expected for a new unsigned Windows app.
 
-The CometPDF 1.1.0 installer has 0 detections on VirusTotal across 70 antivirus engines. To proceed through SmartScreen, click `More info` and then `Run anyway`. If you prefer to avoid installation, use the Portable ZIP.
+CometPDF is not code-signed yet. To proceed through SmartScreen, click `More info` and then `Run anyway`. If you prefer to avoid installation, use the Portable ZIP. A fresh VirusTotal scan should be published for each rebuilt installer hash.
 
 ## SHA256 Checksums
 
@@ -115,6 +115,6 @@ https://cometpdf.com
 
 ## Privacy
 
-CometPDF is designed to convert files locally on your Windows computer. Version 1.1 does not include analytics, advertising SDKs, tracking pixels, accounts, cloud sync, or telemetry.
+CometPDF is designed to convert files locally on your Windows computer. Version 1.1.0 does not include analytics, advertising SDKs, tracking pixels, accounts, cloud sync, or telemetry.
 
 Privacy policy: https://cometpdf.com/privacy/
