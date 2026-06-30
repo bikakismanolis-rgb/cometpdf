@@ -12,6 +12,7 @@ It converts everyday files to PDF and also exports PDFs back to useful formats s
 - Privacy policy: https://cometpdf.com/privacy/
 - Offline PDF converter page: https://cometpdf.com/offline-pdf-converter/
 - No-upload PDF converter page: https://cometpdf.com/no-upload-pdf-converter/
+- Outlook MSG and EML to PDF: https://cometpdf.com/msg-to-pdf/
 
 ## Why CometPDF?
 
@@ -91,7 +92,7 @@ PDF to Word and PDF to PowerPoint in this release prioritize visual fidelity ove
 ## Popular Workflows
 
 - Convert Word, Excel, and PowerPoint files to PDF without uploading.
-- Convert Outlook `.msg` and `.eml` email files to PDF for archiving.
+- [Convert Outlook MSG and EML email files to PDF offline](https://cometpdf.com/msg-to-pdf/) for archiving.
 - Convert images and scans to PDF, including multi-page TIFF files.
 - Batch convert many files and optionally merge the resulting PDFs.
 - Export PDF pages to PNG or JPG images.
